@@ -1,0 +1,57 @@
+line.axis {
+    stroke-width: 1;
+    stroke: #000000;
+}
+.axis-title{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px;
+}
+
+text.tick-a {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: lighter;
+    font-size: 13px;
+    fill: #666699;
+    stroke:none;
+}
+line.tick-a {
+    size:1;
+    stroke-dasharray: 5;
+    stroke: #c0c0c0;
+}
+
+text.tick-b {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: lighter;
+    font-size: 13px;
+    fill: #4a646c;
+    stroke:none;
+}
+line.tick-b{
+    stroke-dasharray: 5;
+    stroke: #778899;
+}
+
+text.tick-c {
+    font-weight: lighter;
+    font-size: 13px;
+    fill: #465945;
+    stroke:none;
+}
+line.tick-c {
+    stroke-dasharray: 5;
+    stroke: #c4c3d0;
+}
+
+circle {
+    width: 3px;
+    height: 3px;
+    fill: #ba55d3;
+    stroke: #7851a9;
+}
+
+circle:hover {
+    fill:#9955bb;
+    stroke: #7851a9;
+    stroke-width: 2px;
+}

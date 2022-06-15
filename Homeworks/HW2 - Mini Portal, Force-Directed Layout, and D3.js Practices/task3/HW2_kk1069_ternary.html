@@ -1,0 +1,143 @@
+<!-- This Code that I am submitting has ben referenced from https://github.com/chunxxu/ternary-plot/ website-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style_ternary.css" />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+
+<body>
+
+<svg width="800" height="800"></svg>
+
+<script>
+
+    var svg = d3.select("svg"),
+        margin = {top: 30, right: 20, bottom: 30, left: 20},
+        m = 15,
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        axis_labels = ['degree','peel','diversity'];
+
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    var triangle_c = [[m,height-2*m],[width-m, height-2*m],[width/2,(height-2*m-(width/2-m)* Math.sqrt(3))]];
+    triangle_c.forEach(function(corner, idx) {
+        var c1 = idx, c2 = idx + 1; if(c2 >= triangle_c.length) { c2 = 0;}
+        g.append("line")
+            .attr("x1", triangle_c[c1][0])
+            .attr("y1", triangle_c[c1][1])
+            .attr("x2", triangle_c[c2][0])
+            .attr("y2", triangle_c[c2][1])
+            .classed('axis', true);
+    });
+
+
+    var ticks = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
+    ticks.forEach(function(v) {
+
+        var point_1 = coord(v, 0, 1-v);
+        var point_2 = coord(v, 1-v, 0);
+        var point_3 = coord(0, 1-v, v);
+        var point_4 = coord(1-v, 0, v);
+        if(v !== 0 && v !== 1) {
+            g.append("line")
+                .attr("x1", point_1[0])
+                .attr("y1", point_1[1])
+                .attr("x2", point_2[0])
+                .attr("y2", point_2[1])
+                .classed('tick tick-a', true);
+            g.append("line")
+                .attr("x1", point_2[0])
+                .attr("y1", point_2[1])
+                .attr("x2", point_3[0])
+                .attr("y2", point_3[1])
+                .classed('tick tick-b', true);
+            g.append("line")
+                .attr("x1", point_3[0])
+                .attr("y1", point_3[1])
+                .attr("x2", point_4[0])
+                .attr("y2", point_4[1])
+                .classed('tick tick-c', true);
+        }
+        g.append("text")
+            .attr("x", point_1[0] - 0.2)
+            .attr("y", point_1[1]  )
+            .text( function (d) { return v; })
+            .classed('tick-text tick-a', true);
+        g.append("text")
+            .attr("x", point_2[0] - .06)
+            .attr("y", point_2[1] + .15 )
+            .text( function (d) { return (1- v); })
+            .classed('tick-text tick-b', true);
+        g.append("text")
+            .attr("x", point_3[0] + .06)
+            .attr("y", point_3[1] )
+            .text( function (d) { return v; })
+            .classed('tick-text tick-c', true);
+    })
+
+
+    var axis_location = [
+        [width/2, height], // a
+        [width/6, height/2], //b
+        [4*width/5, height/2] ] //c
+
+
+    //axis names
+    g.selectAll('.axis-title')
+        .data(axis_labels)
+        .enter()
+        .append('g')
+        .attr('class', 'axis-title')
+        .attr('transform',function(d,i){
+            return 'translate('+axis_location[i][0]+','+axis_location[i][1]+')';
+        })
+        .append('text')
+        .text(function(d){ return d; })
+        .attr('text-anchor', function(d,i){
+            if(i===0) return 'end';
+            if(i===2) return 'middle';
+            return 'start';
+
+        })
+
+
+    d3.csv("asoiaf_nodes_prop.csv").then(function(data) {
+        g.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) {
+                return coord(+d.degree,+d.peel,+d.diversity)[0]
+            })
+            .attr("cy", function (d) { return coord(+d.degree,+d.peel,+d.diversity)[1] })
+            .attr("r", 10)
+    });
+
+  function coord(a, b, c){
+      var sum, pos = [0,0];
+      sum = a + b + c;
+      if(sum !== 0) {
+          a /= sum;
+          b /= sum;
+          c /= sum;
+          pos[0] =  triangle_c[0][0]  * a + triangle_c[1][0]  * b + triangle_c[2][0]  * c;
+          pos[1] =  triangle_c[0][1]  * a + triangle_c[1][1]  * b + triangle_c[2][1]  * c;
+      }
+      return pos;
+  }
+
+
+
+</script>
+
+
+</body>
+</html>

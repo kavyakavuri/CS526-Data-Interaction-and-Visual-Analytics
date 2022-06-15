@@ -1,0 +1,68 @@
+<head>
+  <style> body { margin: 0; } </style>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+
+
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/three-spritetext"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+  <script src="//unpkg.com/3d-force-graph"></script>
+  <script src="./prepdata.js"></script>
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+
+  <script>
+   //  const graphNodesLinks = {}
+   //  queue()
+   // .defer(d3.csv, "asoiaf_nodes_prop.csv")
+   // .defer(d3.csv, "asoiaf_edges_decomposition.csv")
+   // .await(function(error, file1, file2) {prepareData(file1, file2);});
+   // function prepareData(nodes, edges) {
+   //    console.log(edges[0]);
+   //    graphNodesLinks.nodes = nodes;
+   //    graphNodesLinks.links = edges;
+   // }
+   // console.log(graphData)
+    function getGraphDataSet() {
+
+      const loadData = function(Graph) {
+          Graph
+            .nodeLabel(node => {
+              return "<strong style = 'color:blue'>Name: </strong> <span style='color:blue'>" + node.name + '</span>'+
+              "<br><strong style = 'color:blue'>Diversity: </strong> <span style='color:blue'>" + node.diversity + '</span>'+
+              "<br><strong style = 'color:blue'>Peel: </strong> <span style='color:blue'>" + node.peel + '</span>'+
+              "<br><strong style = 'color:blue'>Betweenness: </strong> <span style='color:blue'>" + node.betweenness + '</span>'+
+              "<br><strong style = 'color:blue'>Pagerank: </strong> <span style='color:blue'>" + node.pagerank + '</span>';
+              // return "Name: "+node.name+" Diversity: "+node.diversity+" Peel: "+node.peel+" Betweennness: "+node.betweenness+" Pagerank: "+node.pagerank;
+            })
+            .nodeVal('diversity')
+            .nodeAutoColorBy('peel')
+            .linkWidth('value')
+            .graphData(graphNodesLinks);
+      };
+      return loadData
+    }
+    
+
+    const Graph = ForceGraph3D()
+      (document.getElementById('3d-graph'));
+
+    const dataSet = getGraphDataSet();
+
+    dataSet(Graph
+    .resetProps()
+    .enableNodeDrag(true)
+    .numDimensions(3)
+  );
+
+    // Spread nodes a little wider
+    Graph.d3Force('charge').strength(-120);
+
+  </script>
+</body>
