@@ -1,0 +1,64 @@
+<head>
+  <style> body { margin: 0; } </style>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+
+  <script src="//unpkg.com/three"></script>
+  <script src="https://unpkg.com/3d-force-graph"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+  <script src="//unpkg.com/3d-force-graph"></script>
+  <!-- <script src="./prepdata.js"></script> -->
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+
+  <script>
+    const graphNodesLinks = {}
+    queue()
+   .defer(d3.csv, "cit-Patents_1092_919138_nodes.csv")
+   .defer(d3.csv, "cit-Patents_1092_919138.csv")
+   .await(function(error, file1, file2) {prepareData(file1, file2);});
+   
+   function prepareData(nodes, edges) {
+      new_nodes = nodes.map(element => ({id: parseInt(element["id"])}) );
+      console.log(edges[0]);
+      new_edges = edges.map(element => ({source: parseInt(element["source"]),target:parseInt(element["target"])}));
+      graphNodesLinks["nodes"] = new_nodes;
+      graphNodesLinks["links"] = new_edges;
+   }
+   console.log(graphNodesLinks);
+
+    const data = {"links":[{"source":0,"target":1},{"source":0,"target":2},{"source":1,"target":3},{"source":2,"target":1},{"source":3,"target":1},{"source":3,"target":4},{"source":4,"target":2},{"source":4,"target":5},{"source":5,"target":6}],"nodes":[{"id":0},{"id":1},{"id":2},{"id":3},{"id":4},{"id":5},{"id":6}]};
+    console.log(data);
+
+    const gData = {
+      "nodes": [{"id":0},{"id":1},{"id":2},{"id":3},{"id":4},{"id":5},{"id":6}],
+      "links": [{"source":0,"target":1},{"source":0,"target":2},{"source":1,"target":3},{"source":2,"target":1},{"source":3,"target":1},{"source":3,"target":4},{"source":4,"target":2},{"source":4,"target":5},{"source":5,"target":6}]
+    };
+
+
+    const Graph = ForceGraph3D()
+      (document.getElementById('3d-graph'))
+      .graphData(graphNodesLinks);
+
+    // const dataSet = getGraphDataSet();
+
+    // dataSet(Graph
+    // .resetProps()
+    // .enableNodeDrag(true)
+    // .numDimensions(3)
+    // );
+
+    // Spread nodes a little wider
+    Graph.d3Force('charge').strength(-120);
+
+  </script>
+</body>
